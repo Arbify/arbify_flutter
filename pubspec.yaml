@@ -1,7 +1,7 @@
 name: arbify
 description: >
   Flutter package providing Arbify support.
-version: 0.0.1
+version: 0.0.0
 homepage: https://github.com/Arbify/arbify_flutter
 
 environment:
