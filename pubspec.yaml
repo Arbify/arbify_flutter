@@ -14,7 +14,15 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  args: ^1.6.0
+  dio: ^3.0.9
+  path: ^1.7.0
   pedantic: ^1.0.0
+  yaml: ^2.2.1
+
+executables:
+  - download
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
