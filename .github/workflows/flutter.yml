@@ -1,0 +1,38 @@
+name: Flutter
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: Test on ${{ matrix.channel }}
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        channel: [stable, beta, dev]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          channel: ${{ matrix.channel }}
+
+      - name: Dart version
+        run: dart --version
+
+      - name: Flutter version
+        run: flutter --version
+
+      - name: Download pub dependencies
+        run: flutter pub get
+
+      - name: Run Flutter tests
+        run: flutter test
