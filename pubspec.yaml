@@ -16,7 +16,7 @@ dev_dependencies:
     sdk: flutter
   args: ^1.6.0
   dio: ^3.0.9
-  path: ^1.7.0
+  path: ^1.6.4
   pedantic: ^1.0.0
   yaml: ^2.2.1
 
