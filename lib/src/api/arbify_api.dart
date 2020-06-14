@@ -1,6 +1,4 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
+import 'package:arbify/src/export_info.dart';
 import 'package:meta/meta.dart';
 import 'package:dio/dio.dart';
 
@@ -23,10 +21,13 @@ class ArbifyApi {
 
   /// Fetches available exports with their last modification date from
   /// a project with a given [projectId].
-  Future<Map<String, dynamic>> fetchAvailableExports(int projectId) async {
-    return _client
-        .get('/projects/$projectId/arb')
-        .then((response) => response.data as Map<String, dynamic>);
+  Future<List<ExportInfo>> fetchAvailableExports(int projectId) async {
+    return _client.get('/projects/$projectId/arb').then((response) {
+      return (response.data as Map<String, dynamic>)
+          .entries
+          .map((entry) => ExportInfo(entry.key, DateTime.parse(entry.value)))
+          .toList();
+    });
   }
 
   Future<String> fetchExport(int projectId, String languageCode) async {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:arbify/src/api/arbify_api.dart';
+import 'package:arbify/src/export_info.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -29,8 +30,13 @@ void main() {
           .thenAnswer((_) async => mockResponse);
 
       final exports = await api.fetchAvailableExports(2);
+      final response = ExportInfo('en', DateTime.utc(2020, 6, 7, 18, 13, 57));
 
-      expect(exports, equals(data));
+      expect(exports, isList);
+      expect(exports, isNotEmpty);
+      expect(exports.first, isA<ExportInfo>());
+      expect(exports.first.languageCode, equals(response.languageCode));
+      expect(exports.first.lastModified, equals(response.lastModified));
     });
   });
 

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import '../lib/src/local_arbs.dart';
 import '../lib/src/api/arbify_api.dart';
 import '../lib/src/config.dart';
 import '../lib/src/secret.dart';
@@ -98,6 +99,36 @@ Secret: """);
   );
 
   final api = ArbifyApi(apiUrl: config.apiUrl, secret: config.apiSecret);
+  final localArbs = LocalArbs(config.outputDir);
 
-  print((await api.fetchAvailableExports(config.projectId)).toString());
+  if (!localArbs.exportsDirExists()) {
+    stdout.write("\nOutput directory doesn't exist. Creating... ");
+    localArbs.ensureExportsDir();
+    stdout.write('done.\n');
+  }
+
+  final remoteExports = await api.fetchAvailableExports(config.projectId);
+  final localExports = localArbs.fetchExportInfos();
+
+  for (var export in remoteExports) {
+    stdout.write(_padLeft(export.languageCode, 20));
+    final isAnyNewerThanRemoteLocal = localExports.any((localExport) {
+      return localExport.languageCode == export.languageCode &&
+          localExport.lastModified.compareTo(export.lastModified) >= 0;
+    });
+    if (isAnyNewerThanRemoteLocal) {
+      stdout.write('Up-to-date\n');
+    } else {
+      stdout.write('Downloading... ');
+
+      final remoteArb =
+          await api.fetchExport(config.projectId, export.languageCode);
+      localArbs.put(export.languageCode, remoteArb);
+      stdout.write('done.\n');
+    }
+  }
+}
+
+String _padLeft(String text, int width) {
+  return text + ' ' * (width - text.length);
 }
