@@ -97,7 +97,7 @@ Secret: """);
     apiSecret: apiSecret,
   );
 
-  final api = ArbifyApi(url: config.apiUrl, secret: config.apiSecret);
+  final api = ArbifyApi(apiUrl: config.apiUrl, secret: config.apiSecret);
 
   print((await api.fetchAvailableExports(config.projectId)).toString());
 }
