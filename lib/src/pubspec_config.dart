@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart' as yaml;
 
 class PubspecConfig {
@@ -12,7 +11,7 @@ class PubspecConfig {
 
   /// Creates a [PubspecConfig] from the `pubspec.yaml` file in project directory.
   factory PubspecConfig.fromPubspec() {
-    final pubspecBytes = File(_pubspecPath()).readAsBytesSync();
+    final pubspecBytes = File('pubspec.yaml').readAsBytesSync();
     final pubspec = yaml.loadYaml(utf8.decode(pubspecBytes))['arbify'] ?? {};
 
     return PubspecConfig._(
@@ -21,9 +20,6 @@ class PubspecConfig {
       outputDir: pubspec['output_dir'],
     );
   }
-
-  static String _pubspecPath() =>
-      path.join(Directory.current.path, 'pubspec.yaml');
 
   @override
   String toString() =>

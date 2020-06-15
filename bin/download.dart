@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import '../lib/src/file_utils.dart';
+import '../lib/src/output_file_utils.dart';
 import '../lib/src/arb_parser/arb_file.dart';
 import '../lib/src/l10n_dart_generator/l10n_dart_generator.dart';
 import '../lib/src/arb_parser/arb_parser.dart';
-import '../lib/src/local_arbs.dart';
 import '../lib/src/api/arbify_api.dart';
 import '../lib/src/config.dart';
 import '../lib/src/secret.dart';
@@ -45,7 +44,7 @@ final argParser = ArgParser()
   );
 
 Config config;
-FileUtils fileUtils;
+OutputFileUtils fileUtils;
 
 void main(List<String> args) async {
   final results = argParser.parse(args);
@@ -105,47 +104,54 @@ Secret: """);
     apiSecret: apiSecret,
   );
 
-  fileUtils = FileUtils(outputDir: config.outputDir);
+  fileUtils = OutputFileUtils(outputDir: config.outputDir);
+
+  if (!fileUtils.dirExists()) {
+    stdout.write("\nOutput directory doesn't exist. Creating... ");
+    fileUtils.createDir();
+    stdout.write('done.\n');
+  }
 
   // Fetching ARB files, if needed.
   await fetchExports();
   saveL10nFile();
 }
 
+final arbFilesPattern = RegExp(r'intl_(.*)\.arb');
+
 void fetchExports() async {
   final api = ArbifyApi(apiUrl: config.apiUrl, secret: config.apiSecret);
-  final localArbs = LocalArbs(config.outputDir);
-
-  if (!localArbs.exportsDirExists()) {
-    stdout.write("\nOutput directory doesn't exist. Creating... ");
-    localArbs.ensureExportsDir();
-    stdout.write('done.\n');
-  }
-
   final arbParser = ArbParser();
 
-  final remoteExports = await api.fetchAvailableExports(config.projectId);
-  final localExports = Map.fromEntries(
-    localArbs.fetchExports().map((arbContents) {
-      final arbFile = arbParser.parseString(arbContents);
+  final localArbFiles = fileUtils.fetch(arbFilesPattern);
 
-      return MapEntry(arbFile.locale, arbFile.lastModified);
+  final availableExports = await api.fetchAvailableExports(config.projectId);
+  final availableLocalFiles = Map.fromEntries(
+    localArbFiles.map((contents) {
+      final arb = arbParser.parseString(contents);
+
+      return MapEntry(arb.locale, arb.lastModified);
     }),
   );
 
-  for (var remoteExport in remoteExports) {
-    stdout.write(remoteExport.languageCode.padRight(20));
+  for (var availableExport in availableExports) {
+    stdout.write(availableExport.languageCode.padRight(20));
 
-    final localExport = localExports[remoteExport.languageCode];
-    if (localExport == null ||
-        localExport.isBefore(remoteExport.lastModified)) {
+    final localFileLastModified =
+        availableLocalFiles[availableExport.languageCode];
+
+    // If there is no local file for a given export or if it's older
+    // than the available export, download it.
+    if (localFileLastModified == null ||
+        localFileLastModified.isBefore(availableExport.lastModified)) {
       stdout.write('Downloading... ');
 
       final remoteArb = await api.fetchExport(
         config.projectId,
-        remoteExport.languageCode,
+        availableExport.languageCode,
       );
-      localArbs.put(remoteExport.languageCode, remoteArb);
+
+      fileUtils.put('intl_${availableExport.languageCode}.arb', remoteArb);
 
       stdout.write('done.\n');
     } else {
@@ -157,8 +163,7 @@ void fetchExports() async {
 const templateOrder = ['en', 'en-US', 'en-GB'];
 
 void saveL10nFile() {
-  final localArbs = LocalArbs(config.outputDir);
-  final localFiles = localArbs.fetchExports();
+  final localFiles = fileUtils.fetch(arbFilesPattern);
 
   final arbParser = ArbParser();
 

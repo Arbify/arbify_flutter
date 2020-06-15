@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:path/path.dart' as path;
-
 class Secret {
   /// Whether the secret file exists.
   bool exists() => _secretFile().existsSync();
@@ -25,9 +23,7 @@ class Secret {
     gitignore.writeAsStringSync('.secret.arbify', mode: FileMode.append);
   }
 
-  File _secretFile() =>
-      File(path.join(Directory.current.path, '.secret.arbify'));
+  File _secretFile() => File('.secret.arbify');
 
-  File _gitignoreFile() =>
-      File(path.join(Directory.current.path, '.gitignore'));
+  File _gitignoreFile() => File('.gitignore');
 }

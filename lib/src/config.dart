@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 class Config {
   /// The url of an Arbify instance.
   final Uri apiUrl;
@@ -11,5 +13,10 @@ class Config {
   /// The directory to output results to.
   final String outputDir;
 
-  const Config({this.apiUrl, this.projectId, this.apiSecret, this.outputDir});
+  const Config({
+    @required this.apiUrl,
+    @required this.projectId,
+    @required this.apiSecret,
+    @required this.outputDir,
+  });
 }
