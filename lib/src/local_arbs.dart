@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
-import 'export_info.dart';
 
 class LocalArbs {
   final String exportsDir;
@@ -17,27 +15,14 @@ class LocalArbs {
     _exportsDir().createSync(recursive: true);
   }
 
-  List<ExportInfo> fetchExportInfos() {
-    final arbFileRegex = RegExp('intl_(.*)\.arb');
+  List<String> fetchExports() {
+    final filenamePattern = RegExp('intl_(.*)\.arb');
 
     return _exportsDir()
         .listSync()
         .whereType<File>()
-        .where((file) => arbFileRegex.hasMatch(path.basename(file.path)))
-        .map((arbFile) {
-          try {
-            final arb = json.decode(arbFile.readAsStringSync());
-
-            return ExportInfo(
-              arb['@@locale'] ??
-                  arbFileRegex.firstMatch(path.basename(arbFile.path)).group(1),
-              DateTime.tryParse(arb['@@last_modified'] ?? ''),
-            );
-          } on Exception {
-            return null;
-          }
-        })
-        .where((el) => el != null)
+        .where((file) => filenamePattern.hasMatch(path.basename(file.path)))
+        .map((arbFile) => arbFile.readAsStringSync())
         .toList();
   }
 

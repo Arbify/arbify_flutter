@@ -1,6 +1,7 @@
-import 'package:arbify/src/export_info.dart';
 import 'package:meta/meta.dart';
 import 'package:dio/dio.dart';
+
+import 'export_info.dart';
 
 class ArbifyApi {
   static const _apiPrefix = '/api/v1';

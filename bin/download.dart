@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import '../lib/src/arb_parser/arb_parser.dart';
 import '../lib/src/local_arbs.dart';
 import '../lib/src/api/arbify_api.dart';
 import '../lib/src/config.dart';
@@ -107,28 +108,36 @@ Secret: """);
     stdout.write('done.\n');
   }
 
-  final remoteExports = await api.fetchAvailableExports(config.projectId);
-  final localExports = localArbs.fetchExportInfos();
+  // Fetching ARB files, if needed.
 
-  for (var export in remoteExports) {
-    stdout.write(_padLeft(export.languageCode, 20));
-    final isAnyNewerThanRemoteLocal = localExports.any((localExport) {
-      return localExport.languageCode == export.languageCode &&
-          localExport.lastModified.compareTo(export.lastModified) >= 0;
-    });
-    if (isAnyNewerThanRemoteLocal) {
-      stdout.write('Up-to-date\n');
-    } else {
+  final arbParser = ArbParser();
+
+  final remoteExports = await api.fetchAvailableExports(config.projectId);
+  final localExports = Map.fromEntries(
+    localArbs.fetchExports().map((arbContents) {
+      final arbFile = arbParser.parseString(arbContents);
+
+      return MapEntry(arbFile.locale, arbFile.lastModified);
+    }),
+  );
+
+  for (var remoteExport in remoteExports) {
+    stdout.write(remoteExport.languageCode.padRight(20));
+
+    final localExport = localExports[remoteExport.languageCode];
+    if (localExport == null ||
+        localExport.isBefore(remoteExport.lastModified)) {
       stdout.write('Downloading... ');
 
-      final remoteArb =
-          await api.fetchExport(config.projectId, export.languageCode);
-      localArbs.put(export.languageCode, remoteArb);
+      final remoteArb = await api.fetchExport(
+        config.projectId,
+        remoteExport.languageCode,
+      );
+      localArbs.put(remoteExport.languageCode, remoteArb);
+
       stdout.write('done.\n');
+    } else {
+      stdout.write('Up-to-date\n');
     }
   }
-}
-
-String _padLeft(String text, int width) {
-  return text + ' ' * (width - text.length);
 }

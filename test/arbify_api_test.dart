@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:arbify/src/api/arbify_api.dart';
-import 'package:arbify/src/export_info.dart';
+import 'package:arbify/src/api/export_info.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
