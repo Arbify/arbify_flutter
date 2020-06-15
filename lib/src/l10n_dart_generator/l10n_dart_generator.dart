@@ -32,6 +32,7 @@ class L10nDartGenerator {
 
     return """// File generated with arbify_flutter.
 // DO NOT MODIFY BY HAND.
+// ignore_for_file: lines_longer_than_80_chars
 
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
