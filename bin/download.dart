@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import '../lib/src/file_utils.dart';
+import '../lib/src/arb_parser/arb_file.dart';
+import '../lib/src/l10n_dart_generator/l10n_dart_generator.dart';
 import '../lib/src/arb_parser/arb_parser.dart';
 import '../lib/src/local_arbs.dart';
 import '../lib/src/api/arbify_api.dart';
@@ -40,6 +43,9 @@ final argParser = ArgParser()
     help: 'Secret to be used for authenticating to the Arbify API.\n'
         'Overrides the secret from the .secret.arbify file.',
   );
+
+Config config;
+FileUtils fileUtils;
 
 void main(List<String> args) async {
   final results = argParser.parse(args);
@@ -92,13 +98,21 @@ Secret: """);
     apiSecret = secret.value();
   }
 
-  final config = Config(
+  config = Config(
     apiUrl: pubspec.url,
     projectId: pubspec.projectId,
     outputDir: pubspec.outputDir ?? 'lib/l10n',
     apiSecret: apiSecret,
   );
 
+  fileUtils = FileUtils(outputDir: config.outputDir);
+
+  // Fetching ARB files, if needed.
+  await fetchExports();
+  saveL10nFile();
+}
+
+void fetchExports() async {
   final api = ArbifyApi(apiUrl: config.apiUrl, secret: config.apiSecret);
   final localArbs = LocalArbs(config.outputDir);
 
@@ -107,8 +121,6 @@ Secret: """);
     localArbs.ensureExportsDir();
     stdout.write('done.\n');
   }
-
-  // Fetching ARB files, if needed.
 
   final arbParser = ArbParser();
 
@@ -140,4 +152,37 @@ Secret: """);
       stdout.write('Up-to-date\n');
     }
   }
+}
+
+const templateOrder = ['en', 'en-US', 'en-GB'];
+
+void saveL10nFile() {
+  final localArbs = LocalArbs(config.outputDir);
+  final localFiles = localArbs.fetchExports();
+
+  final arbParser = ArbParser();
+
+  final locales = <String>[];
+  ArbFile template;
+  for (var file in localFiles) {
+    final arb = arbParser.parseString(file);
+
+    locales.add(arb.locale);
+    if (template == null ||
+        templateOrder.contains(arb.locale) &&
+            templateOrder.indexOf(arb.locale) <
+                templateOrder.indexOf(template.locale)) {
+      template = arb;
+    }
+  }
+
+  if (template == null) {
+    print("Couldn't find intl_en.arb to use :(");
+    exit(3);
+  }
+
+  final generator = L10nDartGenerator();
+  final l10nDartContents = generator.generate(template, locales);
+
+  fileUtils.put('l10n.dart', l10nDartContents);
 }
