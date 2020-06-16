@@ -25,4 +25,4 @@ dev_dependencies:
   yaml: ^2.2.1
 
 executables:
-  - download
+  download:
