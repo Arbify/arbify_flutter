@@ -1,14 +1,7 @@
 import 'dart:io';
 
+import 'package:arbify/arbify_download.dart';
 import 'package:args/args.dart';
-import '../lib/src/output_file_utils.dart';
-import '../lib/src/arb_parser/arb_file.dart';
-import '../lib/src/l10n_dart_generator/l10n_dart_generator.dart';
-import '../lib/src/arb_parser/arb_parser.dart';
-import '../lib/src/api/arbify_api.dart';
-import '../lib/src/config.dart';
-import '../lib/src/secret.dart';
-import '../lib/src/pubspec_config.dart';
 
 const _pubspecConfigurationError = """
 
@@ -173,6 +166,8 @@ void saveL10nFile() {
     final arb = arbParser.parseString(file);
 
     locales.add(arb.locale);
+    // Use file with highest priority as a template
+    // or the first one as a fallback.
     if (template == null ||
         templateOrder.contains(arb.locale) &&
             templateOrder.indexOf(arb.locale) <
