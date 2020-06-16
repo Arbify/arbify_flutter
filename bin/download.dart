@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:arbify/arbify_download.dart';
 import 'package:args/args.dart';
+import 'package:path/path.dart' as path;
 
 const _pubspecConfigurationError = """
 
@@ -108,6 +109,14 @@ Secret: """);
   // Fetching ARB files, if needed.
   await fetchExports();
   saveL10nFile();
+
+  stdout.write('Generating messages dart files... ');
+  IntlTranslation().generateFromArb(
+    config.outputDir,
+    [path.join(config.outputDir, 'l10n.dart')],
+    fileUtils.list(RegExp('intl_(.*).arb')),
+  );
+  stdout.write('done\n');
 }
 
 final arbFilesPattern = RegExp(r'intl_(.*)\.arb');
@@ -156,6 +165,8 @@ void fetchExports() async {
 const templateOrder = ['en', 'en-US', 'en-GB'];
 
 void saveL10nFile() {
+  stdout.write('Generating l10n.dart file... ');
+
   final localFiles = fileUtils.fetch(arbFilesPattern);
 
   final arbParser = ArbParser();
@@ -177,7 +188,7 @@ void saveL10nFile() {
   }
 
   if (template == null) {
-    print("Couldn't find intl_en.arb to use :(");
+    print("fail\nCouldn't find intl_en.arb to use :(");
     exit(3);
   }
 
@@ -185,4 +196,6 @@ void saveL10nFile() {
   final l10nDartContents = generator.generate(template, locales);
 
   fileUtils.put('l10n.dart', l10nDartContents);
+
+  stdout.write('done\n');
 }
