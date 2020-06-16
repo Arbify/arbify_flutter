@@ -21,12 +21,27 @@ Use `flutter pub run arbify:download` to run a command-line utility that will gu
 
 1. Adding configuration to your `pubspec.yaml` file
 
-        arbify:
-          url: https://arb.company.com
-          project_id: 17
-          outpur_dir: lib/l10n # default, can be ommited
+    ```yaml
+    arbify:
+        url: https://arb.company.com
+        project_id: 17
+        outpur_dir: lib/l10n # default, can be ommited
+    ```
 
 2. Adding your secret (obtained at https://arb.company.com/account/secrets/create) to `.secret.arbify` file.
+
+### Sample output
+
+```bash
+$ flutter pub run arbify:download
+
+Output directory doesn't exist. Creating... done.
+en                  Downloading... done.
+pl                  Downloading... done.
+mk                  Downloading... done.
+Generating l10n.dart file... done 
+Generating messages dart files... done
+```
 
 [pub-package]: https://pub.dev/packages/arbify
 [pub-package-badge]: https://img.shields.io/pub/v/arbify
