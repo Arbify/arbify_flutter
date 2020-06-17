@@ -1,3 +1,8 @@
+## [0.0.3]
+
+- Fix health suggestions.
+- Fix NoSuchMethodError when running without pubspec config.
+
 ## [0.0.2]
 
 - Fix `petitparser` version constraint error on some Flutter branches.
