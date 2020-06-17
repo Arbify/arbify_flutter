@@ -2,7 +2,7 @@ name: arbify
 description: >
   A package providing support for internationalizing
   Flutter applications using intl package with Arbify.
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/Arbify/arbify_flutter
 
 environment:
