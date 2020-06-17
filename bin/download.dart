@@ -12,8 +12,7 @@ copy the template below and place it at the end of your pubspec.
 arbify:
   url: https://arb.example.org
   project_id: 12
-  # This is the default value.
-  # output_dir: lib/l10n
+  output_dir: lib/l10n # This is the default value.
 """;
 
 final argParser = ArgParser()
@@ -121,7 +120,7 @@ Secret: """);
 
 final arbFilesPattern = RegExp(r'intl_(.*)\.arb');
 
-void fetchExports() async {
+Future<void> fetchExports() async {
   final api = ArbifyApi(apiUrl: config.apiUrl, secret: config.apiSecret);
   final arbParser = ArbParser();
 

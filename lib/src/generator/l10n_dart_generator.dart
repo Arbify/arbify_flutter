@@ -28,7 +28,7 @@ class L10nDartGenerator {
 
 
   $signature => Intl.message(
-        '${messageCode}',
+        '$messageCode',
         name: '${message.id}',""");
 
       if (message.description != null && message.description.isNotEmpty) {

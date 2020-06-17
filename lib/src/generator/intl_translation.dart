@@ -31,6 +31,7 @@ import 'dart:convert';
 
 import 'package:path/path.dart' as path;
 
+// ignore_for_file: implementation_imports
 import 'package:intl_translation/extract_messages.dart';
 import 'package:intl_translation/generate_localized.dart';
 import 'package:intl_translation/src/icu_parser.dart';
