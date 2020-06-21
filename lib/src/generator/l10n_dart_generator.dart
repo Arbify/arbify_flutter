@@ -34,7 +34,7 @@ class L10nDartGenerator {
       if (message.description != null && message.description.isNotEmpty) {
         messagesBuilder.write("""
         
-        description: '${message.description}',""");
+        desc: '${message.description}',""");
       }
 
       if (arguments.all.isNotEmpty) {
