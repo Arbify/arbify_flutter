@@ -52,7 +52,8 @@ class L10nDartGenerator {
 
     return """// File generated with arbify_flutter.
 // DO NOT MODIFY BY HAND.
-// ignore_for_file: lines_longer_than_80_chars
+// ignore_for_file: lines_longer_than_80_chars, non_constant_identifier_names
+// ignore_for_file: unnecessary_brace_in_string_interps
 
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
