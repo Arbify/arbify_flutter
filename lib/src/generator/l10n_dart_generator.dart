@@ -64,6 +64,8 @@ class S {
 
   const S(this.localeName);
 
+  static const delegate = ArbifyLocalizationsDelegate();
+
   static Future<S> load(Locale locale) {
     final name = locale.countryCode.isEmpty ? locale.languageCode : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
