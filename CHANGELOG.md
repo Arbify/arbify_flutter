@@ -1,3 +1,7 @@
+## [0.0.5]
+
+- Always provide `countryCode` for `Locale`s in `l10n.dart`. Fixes an exception.
+
 ## [0.0.4]
 
 - Fix error generating `description` argument instead of `desc` in `l10n.dart`.
