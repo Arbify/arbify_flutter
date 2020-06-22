@@ -76,8 +76,7 @@ class S {
   static const delegate = ArbifyLocalizationsDelegate();
 
   static Future<S> load(Locale locale) {
-    final name = locale.countryCode.isEmpty ? locale.languageCode : locale.toString();
-    final localeName = Intl.canonicalizedLocale(name);
+    final localeName = Intl.canonicalizedLocale(locale.toString());
 
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -114,7 +113,8 @@ $supportedLocales  ];
       final languageCode = "languageCode: '${locale.language}'";
       final scriptCode =
           locale.script == null ? '' : ", scriptCode: '${locale.script}'";
-      final countryCode = ", countryCode: '${locale.region ?? ''}'";
+      final countryCode =
+          locale.script == null ? '' : ", countryCode: '${locale.region}'";
 
       supportedLocales.writeln(
           '        Locale.fromSubtags($languageCode$scriptCode$countryCode),');
