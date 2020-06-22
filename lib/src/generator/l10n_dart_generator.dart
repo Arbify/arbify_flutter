@@ -114,8 +114,7 @@ $supportedLocales  ];
       final languageCode = "languageCode: '${locale.language}'";
       final scriptCode =
           locale.script == null ? '' : ", scriptCode: '${locale.script}'";
-      final countryCode =
-          locale.region == null ? '' : ", countryCode: '${locale.region}'";
+      final countryCode = ", countryCode: '${locale.region ?? ''}'";
 
       supportedLocales.writeln(
           '        Locale.fromSubtags($languageCode$scriptCode$countryCode),');
