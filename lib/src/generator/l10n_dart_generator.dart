@@ -1,3 +1,6 @@
+import 'package:arbify/src/language_identifier_parser/locale.dart';
+import 'package:arbify/src/language_identifier_parser/locale_parser.dart';
+
 import '../icu_parser/icu_parser.dart';
 import '../arb_parser/arb_file.dart';
 
@@ -5,7 +8,6 @@ class L10nDartGenerator {
   const L10nDartGenerator();
 
   String generate(ArbFile template, List<String> locales) {
-    final localeItems = locales.map((locale) => "\n        '$locale',").join();
     final messagesBuilder = StringBuffer();
 
     template.messages.forEach((message) {
@@ -50,6 +52,13 @@ class L10nDartGenerator {
 
     final messages = messagesBuilder.toString();
 
+    final parsedLocales = locales
+        .map((locale) => LanguageIdentifierParser().parse(locale))
+        .toList();
+    final supportedLocales = _generateSupportedLocalesArray(parsedLocales);
+    final localeItems =
+        parsedLocales.map((locale) => "\n        '${locale.language}',").join();
+
     return """// File generated with arbify_flutter.
 // DO NOT MODIFY BY HAND.
 // ignore_for_file: lines_longer_than_80_chars, non_constant_identifier_names
@@ -82,6 +91,9 @@ class S {
 class ArbifyLocalizationsDelegate extends LocalizationsDelegate<S> {
   const ArbifyLocalizationsDelegate();
 
+  List<Locale> get supportedLocales => [
+$supportedLocales  ];
+
   @override
   bool isSupported(Locale locale) => [$localeItems
       ].contains(locale.languageCode);
@@ -93,5 +105,22 @@ class ArbifyLocalizationsDelegate extends LocalizationsDelegate<S> {
   bool shouldReload(ArbifyLocalizationsDelegate old) => false;
 }
 """;
+  }
+
+  String _generateSupportedLocalesArray(List<Locale> locales) {
+    final supportedLocales = StringBuffer();
+
+    locales.forEach((locale) {
+      final languageCode = "languageCode: '${locale.language}'";
+      final scriptCode =
+          locale.script == null ? '' : ", scriptCode: '${locale.script}'";
+      final countryCode =
+          locale.region == null ? '' : ", countryCode: '${locale.region}'";
+
+      supportedLocales.writeln(
+          '        Locale.fromSubtags($languageCode$scriptCode$countryCode),');
+    });
+
+    return supportedLocales.toString();
   }
 }
