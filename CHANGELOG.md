@@ -1,3 +1,9 @@
+## [0.0.4]
+
+- Fix error generating `description` argument instead of `desc` in `l10n.dart`.
+- Add delegate field to `l10n.dart` generator.
+- Add `supportedLocales` to `l10n.dart` generator.
+
 ## [0.0.3]
 
 - Fix health suggestions.
