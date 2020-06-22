@@ -1,3 +1,7 @@
+## [0.0.6]
+
+- Fix `l10n.dart` generator for languages with only country name provided.
+
 ## [0.0.5]
 
 - Always provide `countryCode` for `Locale`s in `l10n.dart`. Fixes an exception.
