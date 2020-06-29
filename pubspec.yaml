@@ -23,3 +23,7 @@ dependencies:
 dev_dependencies:
   test: ^1.14.7
   mockito: ^4.1.1
+
+arbify:
+  url: https://localhost:8000
+  project_id: 69

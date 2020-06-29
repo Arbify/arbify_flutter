@@ -9,3 +9,4 @@ export 'src/config/secret.dart';
 export 'src/generator/intl_translation.dart';
 export 'src/generator/l10n_dart_generator.dart';
 export 'src/output_file_utils.dart';
+export 'src/arbify_cli.dart';

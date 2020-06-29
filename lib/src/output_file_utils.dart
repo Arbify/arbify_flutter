@@ -1,12 +1,11 @@
 import 'dart:io';
 
-import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 
 class OutputFileUtils {
   final String outputDir;
 
-  const OutputFileUtils({@required this.outputDir});
+  const OutputFileUtils(this.outputDir);
 
   bool dirExists() => _dir().existsSync();
 
