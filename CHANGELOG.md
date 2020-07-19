@@ -1,3 +1,8 @@
+## [0.0.7]
+
+- Fix message descriptions containing apostrophes to ruin `l10n.dart`.
+- Fix dependencies versions conflicts.
+
 ## [0.0.6]
 
 - Fix `l10n.dart` generator for languages with only country name provided.
