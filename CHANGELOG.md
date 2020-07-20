@@ -1,3 +1,7 @@
+## [0.0.8]
+
+- Add example project.
+
 ## [0.0.7]
 
 - Fix message descriptions containing apostrophes to ruin `l10n.dart`.

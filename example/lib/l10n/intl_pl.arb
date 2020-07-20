@@ -1,0 +1,7 @@
+{
+    "@@locale": "pl",
+    "@@last_modified": "2020-06-30T16:16:00+00:00",
+    "app_title": "Flutter Pokaz!",
+    "counter_message": "{count, plural, one {Nacisnąłeś przycisk tylko raz!} few {Nacisnąłeś przycisk {count} razy.} many {Nacisnąłeś przycisk {count} razy.} other {Nacisnąłeś przycisk {count} raza.}}",
+    "increment_tooltip": "Inkrementuj"
+}
