@@ -39,7 +39,7 @@ class ArbifyCli {
 
   OutputFileUtils _fileUtils;
 
-  void run(List<String> args) async {
+  Future<void> run(List<String> args) async {
     final results = _argParser.parse(args);
 
     if (results['help'] as bool) {
@@ -177,7 +177,7 @@ Secret: """);
     }
   }
 
-  void runDownload(Config config) async {
+  Future<void> runDownload(Config config) async {
     await _fetchExports(config);
     _saveLocalizationDartFileOrExit();
     _runIntlTranslationGenerateFromArb(config);
