@@ -1,3 +1,7 @@
+## [0.0.9]
+
+- Rename example/README.md to example/EXAMPLE.md
+
 ## [0.0.8]
 
 - Add example project.
