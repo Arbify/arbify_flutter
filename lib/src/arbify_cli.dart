@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:path/path.dart' as path;
 import 'package:arbify/src/api/arbify_api.dart';
 import 'package:arbify/src/arb_parser/arb_file.dart';
@@ -12,6 +10,7 @@ import 'package:arbify/src/generator/l10n_dart_generator.dart';
 import 'package:arbify/src/output_file_utils.dart';
 import 'package:args/args.dart';
 import 'package:dio/dio.dart';
+import 'package:universal_io/io.dart';
 
 class ArbifyCli {
   final _argParser = ArgParser()

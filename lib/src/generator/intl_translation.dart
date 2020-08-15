@@ -28,13 +28,13 @@
 
 // ignore_for_file: implementation_imports
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:intl_translation/extract_messages.dart';
 import 'package:intl_translation/generate_localized.dart';
 import 'package:intl_translation/src/icu_parser.dart';
 import 'package:intl_translation/src/intl_message.dart';
 import 'package:path/path.dart' as path;
+import 'package:universal_io/io.dart';
 
 class IntlTranslation {
   final pluralAndGenderParser = IcuParser().message;

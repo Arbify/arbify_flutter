@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:path/path.dart' as path;
+import 'package:universal_io/io.dart';
 
 class OutputFileUtils {
   final String outputDir;
