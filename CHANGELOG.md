@@ -1,3 +1,7 @@
+# 0.0.10
+
+- Fix `l10n.dart` file being generated lacking messages due to using wrong locale as the main one.
+
 # 0.0.9
 
 - Rename example/README.md to example/EXAMPLE.md
