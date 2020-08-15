@@ -1,3 +1,9 @@
+# 0.0.11
+
+- Use `universal_io` package for IO.
+- Fix `l10n.dart` file generating wrongly, again.
+- Use `lint` package for static analysis.
+
 # 0.0.10
 
 - Fix `l10n.dart` file being generated lacking messages due to using wrong locale as the main one.
