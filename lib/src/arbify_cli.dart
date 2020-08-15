@@ -252,12 +252,12 @@ project id is $projectId.''');
       final arb = arbParser.parseString(file);
 
       locales.add(arb.locale);
+
       // Use file with highest priority as a template
       // or the first one as a fallback.
-      if (template == null ||
-          templateOrder.contains(arb.locale) &&
-              templateOrder.indexOf(arb.locale) <
-                  templateOrder.indexOf(template.locale)) {
+      template ??= arb;
+      final order = templateOrder.indexOf(arb.locale);
+      if (order != -1 && order < templateOrder.indexOf(template.locale)) {
         template = arb;
       }
     }
