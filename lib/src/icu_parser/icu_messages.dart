@@ -187,7 +187,8 @@ class Gender extends IcuMessage {
   ) {
     final gender = Gender(variableName, {}, parent);
     gender.clauses.addEntries(genderClauses.map(
-      (clause) => MapEntry(clause[0], Message.from(clause[1], gender)),
+      (clause) =>
+          MapEntry(clause[0] as String, Message.from(clause[1], gender)),
     ));
 
     return gender;
@@ -239,7 +240,7 @@ class Select extends IcuMessage {
   String toCode() {
     final buffer = StringBuffer();
     buffer.write('\${Intl.select(');
-    buffer.write(variableName + ', cases: {');
+    buffer.write('$variableName, cases: {');
     clauses.forEach((key, value) {
       buffer.write("'$key': '${value.toCode()}',");
     });

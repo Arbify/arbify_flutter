@@ -198,7 +198,7 @@ Secret: """);
       }),
     );
 
-    for (var availableExport in availableExports) {
+    for (final availableExport in availableExports) {
       stdout.write(availableExport.languageCode.padRight(20));
 
       final localFileLastModified =
@@ -248,7 +248,7 @@ project id is $projectId.''');
     final arbParser = ArbParser();
     final locales = <String>[];
     ArbFile template;
-    for (var file in localFiles) {
+    for (final file in localFiles) {
       final arb = arbParser.parseString(file);
 
       locales.add(arb.locale);
@@ -273,7 +273,7 @@ project id is $projectId.''');
       exit(4);
     }
 
-    final generator = L10nDartGenerator();
+    const generator = L10nDartGenerator();
     final l10nDartContents = generator.generate(template, locales);
 
     _fileUtils.put('l10n.dart', l10nDartContents);

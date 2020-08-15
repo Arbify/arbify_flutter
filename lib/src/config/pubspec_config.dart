@@ -15,9 +15,9 @@ class PubspecConfig {
     final pubspec = yaml.loadYaml(utf8.decode(pubspecBytes))['arbify'] ?? {};
 
     return PubspecConfig._(
-      url: Uri.tryParse(pubspec['url'] ?? ''),
-      projectId: pubspec['project_id'],
-      outputDir: pubspec['output_dir'],
+      url: Uri.tryParse(pubspec['url'] as String),
+      projectId: pubspec['project_id'] as int,
+      outputDir: pubspec['output_dir'] as String,
     );
   }
 

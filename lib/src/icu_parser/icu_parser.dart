@@ -41,7 +41,7 @@ class IcuParser {
   Parser get quotedCurly => (string("'{'") | string("'}'")).map((x) => x[1]);
 
   Parser get icuEscapedText => quotedCurly | twoSingleQuotes;
-  Parser get curly => (openCurly | closeCurly);
+  Parser get curly => openCurly | closeCurly;
   Parser get notAllowedInIcuText => curly | char('<');
   Parser get icuText => notAllowedInIcuText.neg();
   Parser get notAllowedInNormalText => char('{');
@@ -63,7 +63,7 @@ class IcuParser {
       ['=0', '=1', '=2', 'zero', 'one', 'two', 'few', 'many', 'other']);
   Parser get genderKeyword => asKeywords(['female', 'male', 'other']);
 
-  var interiorText = undefined();
+  SettableParser interiorText = undefined();
 
   Parser get preface => (openCurly & id & comma).map((values) => values[1]);
 
@@ -74,8 +74,8 @@ class IcuParser {
           .map((result) => [result[0], result[2]]);
   Parser get plural =>
       preface & pluralLiteral & comma & pluralClause.plus() & closeCurly;
-  Parser get intlPlural =>
-      plural.map((values) => Plural.from(values.first, values[3], null));
+  Parser get intlPlural => plural.map(
+      (values) => Plural.from(values.first as String, values[3] as List, null));
 
   Parser get genderLiteral => string('gender');
   Parser get genderClause =>
@@ -84,16 +84,16 @@ class IcuParser {
           .map((result) => [result[0], result[2]]);
   Parser get gender =>
       preface & genderLiteral & comma & genderClause.plus() & closeCurly;
-  Parser get intlGender =>
-      gender.map((values) => Gender.from(values.first, values[3], null));
+  Parser get intlGender => gender.map(
+      (values) => Gender.from(values.first as String, values[3] as List, null));
 
   Parser get selectLiteral => string('select');
   Parser get selectClause =>
       (id & openCurly & interiorText & closeCurly).map((x) => [x.first, x[2]]);
   Parser get generalSelect =>
       preface & selectLiteral & comma & selectClause.plus() & closeCurly;
-  Parser get intlSelect =>
-      generalSelect.map((values) => Select.from(values.first, values[3], null));
+  Parser get intlSelect => generalSelect.map(
+      (values) => Select.from(values.first as String, values[3] as List, null));
 
   Parser get pluralOrGenderOrSelect => intlPlural | intlGender | intlSelect;
 
@@ -102,7 +102,7 @@ class IcuParser {
   Parser get empty => epsilon().map((_) => '');
 
   Parser get parameter => (openCurly & id & closeCurly)
-      .map((param) => VariableSubstitution(param[1], null));
+      .map((param) => VariableSubstitution(param[1] as String, null));
 
   Message parse(String text) {
     // final result = (pluralOrGenderOrSelect | simpleText | empty)

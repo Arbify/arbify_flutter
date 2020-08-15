@@ -9,7 +9,7 @@ class ArbifyApi {
   final Dio _client;
 
   ArbifyApi({@required Uri apiUrl, @required String secret, Dio client})
-      : _client = (client ?? Dio()) {
+      : _client = client ?? Dio() {
     _client.options = _client.options.merge(
       baseUrl: apiUrl.toString() + _apiPrefix,
       headers: {
@@ -26,7 +26,8 @@ class ArbifyApi {
     return _client.get('/projects/$projectId/arb').then((response) {
       return (response.data as Map<String, dynamic>)
           .entries
-          .map((entry) => ExportInfo(entry.key, DateTime.parse(entry.value)))
+          .map((entry) =>
+              ExportInfo(entry.key, DateTime.parse(entry.value as String)))
           .toList();
     });
   }
@@ -34,6 +35,6 @@ class ArbifyApi {
   Future<String> fetchExport(int projectId, String languageCode) async {
     return _client
         .get('/projects/$projectId/arb/$languageCode')
-        .then((response) => response.data);
+        .then((response) => response.data as String);
   }
 }

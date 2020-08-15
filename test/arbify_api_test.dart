@@ -42,7 +42,7 @@ void main() {
 
   group('fetchExport', () {
     test('returns valid string', () async {
-      final data = '{"@@locale": "en"}';
+      const data = '{"@@locale": "en"}';
       final mockResponse = ResponseBody.fromString(data, 200);
       when(adapterMock.fetch(any, any, any))
           .thenAnswer((_) async => mockResponse);

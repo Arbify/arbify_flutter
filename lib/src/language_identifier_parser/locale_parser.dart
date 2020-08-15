@@ -18,8 +18,11 @@ class LanguageIdentifierParser {
   Parser get id => language & scriptPart & regionPart;
 
   Locale parse(String text) => id
-      .map((value) =>
-          Locale(language: value[0], script: value[1], region: value[2]))
+      .map((value) => Locale(
+            language: value[0] as String,
+            script: value[1] as String,
+            region: value[2] as String,
+          ))
       .parse(text)
       .value;
 }

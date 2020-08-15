@@ -14,17 +14,17 @@ class ArbParser {
       }
 
       final attributes = json['@$key'] as Map<String, dynamic>;
-      final message = parseMessage(key, value, attributes);
+      final message = parseMessage(key, value as String, attributes);
 
       messages.add(message);
     });
 
     final file = ArbFile(
       messages: messages,
-      locale: json['@@locale'],
-      context: json['@@context'],
-      lastModified: DateTime.tryParse(json['@@last_modified']),
-      author: json['@@author'],
+      locale: json['@@locale'] as String,
+      context: json['@@context'] as String,
+      lastModified: DateTime.tryParse(json['@@last_modified'] as String),
+      author: json['@@author'] as String,
     );
 
     return file;
@@ -35,19 +35,19 @@ class ArbParser {
     String value,
     Map<String, dynamic> attributes,
   ) {
-    attributes ??= {};
+    final attrs = attributes ?? {};
 
-    final customAttributes = parseCustomAttributes(attributes);
+    final customAttributes = parseCustomAttributes(attrs);
     final message = ArbMessage(
       id: id,
       value: value,
-      type: attributes['type'],
-      context: attributes['context'],
-      description: attributes['description'],
-      placeholders: attributes['placeholders'],
-      screenshot: attributes['screenshot'],
-      video: attributes['video'],
-      sourceText: attributes['source_text'],
+      type: attrs['type'] as String,
+      context: attrs['context'] as String,
+      description: attrs['description'] as String,
+      placeholders: attrs['placeholders'] as Map<String, Map<String, String>>,
+      screenshot: attrs['screenshot'] as String,
+      video: attrs['video'] as String,
+      sourceText: attrs['source_text'] as String,
       customAttributes: customAttributes,
     );
 

@@ -26,21 +26,20 @@
 //
 // Modified by Albert Wolszon.
 
-import 'dart:io';
-import 'dart:convert';
-
-import 'package:path/path.dart' as path;
-
 // ignore_for_file: implementation_imports
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:intl_translation/extract_messages.dart';
 import 'package:intl_translation/generate_localized.dart';
 import 'package:intl_translation/src/icu_parser.dart';
 import 'package:intl_translation/src/intl_message.dart';
+import 'package:path/path.dart' as path;
 
 class IntlTranslation {
   final pluralAndGenderParser = IcuParser().message;
   final plainParser = IcuParser().nonIcuMessage;
-  final JsonCodec jsonDecoder = JsonCodec();
+  final JsonCodec jsonDecoder = const JsonCodec();
 
   final MessageExtraction extraction = MessageExtraction();
   final MessageGeneration generation = MessageGeneration();
@@ -55,37 +54,38 @@ class IntlTranslation {
 
   void generateFromArb(
       String outputDir, List<String> dartFiles, List<String> arbFiles) {
-    var allMessages = dartFiles.map((file) => extraction.parseFile(File(file)));
-    for (var messageMap in allMessages) {
+    final allMessages =
+        dartFiles.map((file) => extraction.parseFile(File(file)));
+    for (final messageMap in allMessages) {
       messageMap.forEach(
           (key, value) => messages.putIfAbsent(key, () => []).add(value));
     }
 
-    var messagesByLocale = <String, List<Map>>{};
+    final messagesByLocale = <String, List<Map>>{};
     // Note: To group messages by locale, we eagerly read all data, which might cause a memory issue for large projects
-    for (var arbFile in arbFiles) {
+    for (final arbFile in arbFiles) {
       _loadData(arbFile, messagesByLocale);
     }
     messagesByLocale.forEach((locale, data) {
       _generateLocaleFile(locale, data, outputDir);
     });
 
-    var mainImportFile = File(path.join(
+    final mainImportFile = File(path.join(
         outputDir, '${generation.generatedFilePrefix}messages_all.dart'));
     mainImportFile.writeAsStringSync(generation.generateMainImportFile());
   }
 
   void _loadData(String filename, Map<String, List<Map>> messagesByLocale) {
-    var file = File(filename);
-    var src = file.readAsStringSync();
-    var data = jsonDecoder.decode(src);
-    var locale = data['@@locale'] ?? data['_locale'];
+    final file = File(filename);
+    final src = file.readAsStringSync();
+    final data = jsonDecoder.decode(src) as Map<String, dynamic>;
+    String locale = (data['@@locale'] ?? data['_locale']) as String;
     if (locale == null) {
       // Get the locale from the end of the file name. This assumes that the file
       // name doesn't contain any underscores except to begin the language tag
       // and to separate language from country. Otherwise we can't tell if
       // my_file_fr.arb is locale "fr" or "file_fr".
-      var name = path.basenameWithoutExtension(file.path);
+      final name = path.basenameWithoutExtension(file.path);
       locale = name.split('_').skip(1).join('_');
       // info(
       //     "No @@locale or _locale field found in $name, assuming '$locale' based on the file name.");
@@ -95,11 +95,14 @@ class IntlTranslation {
   }
 
   void _generateLocaleFile(
-      String locale, List<Map> localeData, String targetDir) {
-    var translations = <TranslatedMessage>[];
-    for (var jsonTranslations in localeData) {
+    String locale,
+    List<Map> localeData,
+    String targetDir,
+  ) {
+    final translations = <TranslatedMessage>[];
+    for (final jsonTranslations in localeData) {
       jsonTranslations.forEach((id, messageData) {
-        TranslatedMessage message = _recreateIntlObjects(id, messageData);
+        final message = _recreateIntlObjects(id as String, messageData);
         if (message != null) {
           translations.add(message);
         }
@@ -115,11 +118,11 @@ class IntlTranslation {
   BasicTranslatedMessage _recreateIntlObjects(String id, data) {
     if (id.startsWith('@')) return null;
     if (data == null) return null;
-    var parsed = pluralAndGenderParser.parse(data).value;
+    var parsed = pluralAndGenderParser.parse(data as String).value;
     if (parsed is LiteralString && parsed.string.isEmpty) {
-      parsed = plainParser.parse(data).value;
+      parsed = plainParser.parse(data as String).value;
     }
-    return BasicTranslatedMessage(id, parsed, messages);
+    return BasicTranslatedMessage(id, parsed as Message, messages);
   }
 }
 
@@ -127,7 +130,7 @@ class IntlTranslation {
 class BasicTranslatedMessage extends TranslatedMessage {
   Map<String, List<MainMessage>> messages;
 
-  BasicTranslatedMessage(String name, translated, this.messages)
+  BasicTranslatedMessage(String name, Message translated, this.messages)
       : super(name, translated);
 
   @override

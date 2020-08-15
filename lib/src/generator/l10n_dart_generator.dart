@@ -1,8 +1,7 @@
+import 'package:arbify/src/arb_parser/arb_file.dart';
+import 'package:arbify/src/icu_parser/icu_parser.dart';
 import 'package:arbify/src/language_identifier_parser/locale.dart';
 import 'package:arbify/src/language_identifier_parser/locale_parser.dart';
-
-import '../icu_parser/icu_parser.dart';
-import '../arb_parser/arb_file.dart';
 
 class L10nDartGenerator {
   const L10nDartGenerator();
@@ -10,7 +9,7 @@ class L10nDartGenerator {
   String generate(ArbFile template, List<String> locales) {
     final messagesBuilder = StringBuffer();
 
-    template.messages.forEach((message) {
+    for (final message in template.messages) {
       final parsedMessage = IcuParser().parse(message.value);
       final messageCode = parsedMessage.toCode();
       final arguments = parsedMessage.arguments;
@@ -50,7 +49,7 @@ class L10nDartGenerator {
       }
 
       messagesBuilder.write('\n      );');
-    });
+    }
 
     final messages = messagesBuilder.toString();
 
@@ -61,7 +60,8 @@ class L10nDartGenerator {
     final localeItems =
         parsedLocales.map((locale) => "\n        '${locale.language}',").join();
 
-    return """// File generated with arbify_flutter.
+    return """
+// File generated with arbify_flutter.
 // DO NOT MODIFY BY HAND.
 // ignore_for_file: lines_longer_than_80_chars, non_constant_identifier_names
 // ignore_for_file: unnecessary_brace_in_string_interps
@@ -111,7 +111,7 @@ $supportedLocales  ];
   String _generateSupportedLocalesArray(List<Locale> locales) {
     final supportedLocales = StringBuffer();
 
-    locales.forEach((locale) {
+    for (final locale in locales) {
       final languageCode = "languageCode: '${locale.language}'";
       final scriptCode =
           locale.script == null ? '' : ", scriptCode: '${locale.script}'";
@@ -120,7 +120,7 @@ $supportedLocales  ];
 
       supportedLocales.writeln(
           '        Locale.fromSubtags($languageCode$scriptCode$countryCode),');
-    });
+    }
 
     return supportedLocales.toString();
   }
