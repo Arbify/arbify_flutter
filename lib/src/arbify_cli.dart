@@ -183,7 +183,7 @@ Secret: """);
     _runIntlTranslationGenerateFromArb(config);
   }
 
-  void _fetchExports(Config config) async {
+  Future<void> _fetchExports(Config config) async {
     final api = ArbifyApi(apiUrl: config.apiUrl, secret: config.apiSecret);
     final arbParser = ArbParser();
 
@@ -256,8 +256,14 @@ project id is $projectId.''');
       // Use file with highest priority as a template
       // or the first one as a fallback.
       template ??= arb;
-      final order = templateOrder.indexOf(arb.locale);
-      if (order != -1 && order < templateOrder.indexOf(template.locale)) {
+
+      final fileIndexInOrder = templateOrder.indexOf(arb.locale);
+      var templateIndexInOrder = templateOrder.indexOf(template.locale);
+      // If the template's language isn't in order list, make its index big
+      // so it doesn't prevent from an actual template to override it.
+      if (templateIndexInOrder == -1) templateIndexInOrder = 10000;
+
+      if (fileIndexInOrder != -1 && fileIndexInOrder < templateIndexInOrder) {
         template = arb;
       }
     }
