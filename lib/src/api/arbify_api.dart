@@ -1,40 +1,41 @@
-import 'package:meta/meta.dart';
 import 'package:dio/dio.dart';
 
 import 'export_info.dart';
 
 class ArbifyApi {
-  static const _apiPrefix = '/api/v1';
+  late final Dio _client;
 
-  final Dio _client;
+  ArbifyApi({required Uri apiUrl, required String secret, Dio? client}) {
+    _client = client ?? Dio();
 
-  ArbifyApi({@required Uri apiUrl, @required String secret, Dio client})
-      : _client = client ?? Dio() {
-    _client.options = _client.options.merge(
-      baseUrl: apiUrl.toString() + _apiPrefix,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json; charset=utf-8',
-        'Authorization': 'Bearer $secret',
-      },
-    );
+    final options = _client.options;
+    options.baseUrl = '$apiUrl/api/v1';
+    options.headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json; charset=utf-8',
+      'Authorization': 'Bearer $secret',
+    };
   }
 
   /// Fetches available exports with their last modification date from
   /// a project with a given [projectId].
-  Future<List<ExportInfo>> fetchAvailableExports(int projectId) async {
-    return _client.get('/projects/$projectId/arb').then((response) {
-      return (response.data as Map<String, dynamic>)
-          .entries
-          .map((entry) =>
-              ExportInfo(entry.key, DateTime.parse(entry.value as String)))
-          .toList();
-    });
+  Future<List<ExportInfo>> fetchAvailableExportsForProj(int projectId) async {
+    final response = await _client.get('/projects/$projectId/arb');
+
+    return (response.data as Map<String, dynamic>).entries.map((entry) {
+      return ExportInfo(
+        languageCode: entry.key,
+        lastModified: DateTime.parse(entry.value as String),
+      );
+    }).toList();
   }
 
-  Future<String> fetchExport(int projectId, String languageCode) async {
-    return _client
-        .get('/projects/$projectId/arb/$languageCode')
-        .then((response) => response.data as String);
+  Future<String> fetchExport({
+    required int projectId,
+    required String languageCode,
+  }) async {
+    final path = '/projects/$projectId/arb/$languageCode';
+    final response = await _client.get(path);
+    return response.data as String;
   }
 }

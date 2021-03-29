@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 // https://github.com/google/app-resource-bundle/wiki/ApplicationResourceBundleSpecification
 class ArbMessage {
   /// [id] is the resource id is the identifier for the resource in a given
@@ -23,7 +21,7 @@ class ArbMessage {
   /// [type] describes the type of resource. Possible values are "text",
   /// "image", "css". Program should not rely on this attribute in run time.
   /// It is mainly for the localization tools.
-  final String type;
+  final String? type;
 
   /// [context] describes (in text) the context in which this resource applies.
   /// Context is organized in hierarchy, and level separated by ":".
@@ -34,12 +32,12 @@ class ArbMessage {
   /// Example:
   ///
   ///     "context":"homePage:Print dialog box"
-  final String context;
+  final String? context;
 
   /// [description] is a short paragraph describing the resource and how it is
   /// being used by the app, and message that need to be passed to
   /// localization process and translators.
-  final String description;
+  final String? description;
 
   /// [placeholders] is a map from placeholder id to placeholder properties,
   /// including description and example. Placeholder can be specified using
@@ -100,23 +98,23 @@ class ArbMessage {
   ///         }
   ///       }
   ///     },
-  final Map<String, Map<String, String>> placeholders;
+  final Map<String, Map<String, String>>? placeholders;
 
   /// [screenshot] is a URL to the image location or base-64 encoded image
   /// data.
-  final String screenshot;
+  final String? screenshot;
 
   /// [video] is a URL to a video of the app/resource/widget in action.
-  final String video;
+  final String? video;
 
   /// [sourceText] is the source of the text from where this message is
   /// translated from. This is used to track source arb change and determine
   /// if this message need to be updated.
-  final String sourceText;
+  final String? sourceText;
 
   /// [customAttributes] is a map of customized attributes that are
   /// the attributes prefixed with "x-".
-  final Map<String, dynamic> customAttributes;
+  final Map<String, dynamic>? customAttributes;
 
   /// Resource values ([value]) in an ARB file is always in the form of
   /// a string. Most of those strings represent translatable text. Some strings
@@ -127,7 +125,8 @@ class ArbMessage {
   final String value;
 
   ArbMessage({
-    @required this.id,
+    required this.id,
+    required this.value,
     this.type,
     this.context,
     this.description,
@@ -136,6 +135,5 @@ class ArbMessage {
     this.video,
     this.sourceText,
     this.customAttributes,
-    @required this.value,
   });
 }

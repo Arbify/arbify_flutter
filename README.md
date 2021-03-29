@@ -3,7 +3,7 @@
 [![pub package][pub-package-badge]][pub-package]
 [![Flutter workflow][flutter-workflow-badge]][flutter-workflow]
 
-A package providing support for internationalizing Flutter applications using [intl] package with [Arbify].
+A wrapper of [intl_utils](https://pub.dev/packages/intl_utils). Provides your translations server instead of `localizely` server
 
 ## Usage
 
@@ -23,9 +23,20 @@ Use `flutter pub run arbify:download` to run a command-line utility that will gu
 
     ```yaml
     arbify:
-        url: https://arb.company.com
-        project_id: 17
-        outpur_dir: lib/l10n # default, can be ommited
+      url: https://arb.company.com
+      project_id: 17
+      outpur_dir: lib/l10n # default, can be omitted
+    ```
+
+    Additional configs from [intl_utils](https://pub.dev/packages/intl_utils):
+    ```yaml
+    flutter_intl:
+      enabled: false # Required. If true IDE plugin will watch changes of files and generate it by itself
+      class_name: S # Optional. Sets the name for the generated localization class. Default: S
+      main_locale: en # Optional. Sets the main locale used for generating localization files. Provided value should consist of language code and optional script and country codes separated with underscore (e.g. 'en', 'en_GB', 'zh_Hans', 'zh_Hans_CN'). Default: en
+      arb_dir: lib/l10n # Optional. Sets the directory of your ARB resource files. Provided value should be a valid path on your system. Default: lib/l10n
+      output_dir: lib/generated # Optional. Sets the directory of generated localization files. Provided value should be a valid path on your system. Default: lib/generated
+      use_deferred_loading: false # Optional. Must be set to true to generate localization code that is loaded with deferred loading. Default: false
     ```
 
 2. Adding your secret (obtained at https://arb.company.com/account/secrets/create) to `.secret.arbify` file.

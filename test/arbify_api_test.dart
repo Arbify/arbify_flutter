@@ -3,20 +3,21 @@ import 'dart:convert';
 import 'package:arbify/src/api/arbify_api.dart';
 import 'package:arbify/src/api/export_info.dart';
 import 'package:dio/dio.dart';
+import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
 import 'package:mockito/mockito.dart';
+import 'arbify_api_test.mocks.dart';
 
-class DioAdapterMock extends Mock implements HttpClientAdapter {}
-
+@GenerateMocks([HttpClientAdapter])
 void main() {
   final dio = Dio();
-  DioAdapterMock adapterMock;
-  ArbifyApi api;
+  late MockHttpClientAdapter adapterMock;
+  late ArbifyApi api;
   setUp(() {
-    adapterMock = DioAdapterMock();
+    adapterMock = MockHttpClientAdapter();
     dio.httpClientAdapter = adapterMock;
     api = ArbifyApi(
-      apiUrl: Uri.parse('http://test'),
+      apiUrl: Uri.parse('https://test'),
       secret: 'secret',
       client: dio,
     );
@@ -29,8 +30,11 @@ void main() {
       when(adapterMock.fetch(any, any, any))
           .thenAnswer((_) async => mockResponse);
 
-      final exports = await api.fetchAvailableExports(2);
-      final response = ExportInfo('en', DateTime.utc(2020, 6, 7, 18, 13, 57));
+      final exports = await api.fetchAvailableExportsForProj(2);
+      final response = ExportInfo(
+        languageCode: 'en',
+        lastModified: DateTime.utc(2020, 6, 7, 18, 13, 57),
+      );
 
       expect(exports, isList);
       expect(exports, isNotEmpty);
@@ -47,7 +51,7 @@ void main() {
       when(adapterMock.fetch(any, any, any))
           .thenAnswer((_) async => mockResponse);
 
-      final export = await api.fetchExport(2, 'en');
+      final export = await api.fetchExport(languageCode: 'en', projectId: 2);
       expect(export, equals(data));
     });
   });
